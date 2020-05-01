@@ -1,2 +1,11 @@
 # Project exclude paths
 /out/
+
+# Eclipse
+.settings/
+.classpath
+.project
+
+# IntelliJ IDEA
+.idea/
+*.iml
