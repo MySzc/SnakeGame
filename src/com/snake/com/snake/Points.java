@@ -3,7 +3,7 @@ package com.snake;
 import javax.swing.*;
 import java.awt.*;
 
-public class Points {
+public class Points extends Thread{
 
     // Rand seed
     private final int RAND_POS = 29;
@@ -99,7 +99,34 @@ public class Points {
         r = (int) (Math.random() * RAND_POS);
         this.frog_y = r * DOT_SIZE;
 
-        // TODO Frog movement
     }
 
+    public void moveFrog(){
+        // TODO Frog movement
+        int movement =(int) (Math.random()*20);
+
+        if(movement == 0 && (this.frog_x/DOT_SIZE - 1) >= 0){
+            this.frog_x -= 1*DOT_SIZE;
+        }else if(movement == 1 && (this.frog_x/DOT_SIZE + 1) <= 290) {
+            this.frog_x += 1*DOT_SIZE;
+        }else if(movement == 2 && (this.frog_y/DOT_SIZE - 1) >= 0) {
+            this.frog_y -= 1*DOT_SIZE;
+        }else if(movement == 3 && (this.frog_y/DOT_SIZE + 1) <= 290) {
+            this.frog_y += 1*DOT_SIZE;
+        }
+    }
+
+    // Thread
+    public void run() {
+        try {
+            // Displaying the thread that is running
+            System.out.println ("Thread " +
+                    Thread.currentThread().getId() +
+                    " is running");
+
+        } catch (Exception e) {
+            // Throwing an exception
+            System.out.println ("Exception is caught");
+        }
+    }
 }

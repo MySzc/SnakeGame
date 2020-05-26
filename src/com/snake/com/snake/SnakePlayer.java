@@ -6,14 +6,15 @@ public class SnakePlayer extends Snake {
 
     SnakePlayer(){
         loadImageSnake();
+        rightDirection = true;
     }
 
     @Override
     public void loadImageSnake(){
-        ImageIcon iih = new ImageIcon(getClass().getResource("/res/head.png"));
+        ImageIcon iih = new ImageIcon(getClass().getResource("/res/headPlayer.png"));
         this.head = iih.getImage();
 
-        ImageIcon iid = new ImageIcon(getClass().getResource("/res/dot.png"));
+        ImageIcon iid = new ImageIcon(getClass().getResource("/res/dotPlayer.png"));
         this.dot = iid.getImage();
     }
 

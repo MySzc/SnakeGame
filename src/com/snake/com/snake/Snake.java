@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class Snake {
+public class Snake extends Thread{
 
     // Dots making the body of the snake
     private int dots;
@@ -16,7 +16,7 @@ public class Snake {
 
     // TODO Move this to SnakePlayer
     // Movements of the snake
-    public boolean rightDirection = true;
+    public boolean rightDirection = false;
     public boolean leftDirection = false;
     public boolean upDirection = false;
     public boolean downDirection = false;
@@ -24,6 +24,9 @@ public class Snake {
     // Images of the snake
     public Image head;
     public Image dot;
+
+    // Needed to check the winner of the game
+    public boolean isLoser = false;
 
 
     // Snake movement
@@ -87,18 +90,24 @@ public class Snake {
 */
     // Snake collision
     public boolean checkSingleSnakeCollision(){
-        for (int z = this.dots; z < 0; z--) {
-            if                      ((z > 4) &&
-                    (this.x[0] == this.x[z]) &&
-                    (this.y[0] == this.y[z])) {
-
+        for (int z = this.dots; z > 0; z--) {
+            if((this.x[0] == this.x[z]) &&
+                (this.y[0] == this.y[z])) {
+                System.out.println("Single Snake Collision");
+                this.isLoser = true;
                 return true;
             }
         }
         return false;
     }
 
+
+
     // Snake access
+    public int getDOT_SIZE(){
+        return this.DOT_SIZE;
+    }
+
     public void loadImageSnake(){
         System.out.println("Default snake image");
     }
@@ -142,6 +151,20 @@ public class Snake {
 
     public void incrementDots(){
         this.dots += 1;
+    }
+
+    // Threads
+    public void run() {
+        try {
+            // Displaying the thread that is running
+            System.out.println ("Thread " +
+                    Thread.currentThread().getId() +
+                    " is running");
+
+        } catch (Exception e) {
+            // Throwing an exception
+            System.out.println ("Exception is caught");
+        }
     }
 
 }

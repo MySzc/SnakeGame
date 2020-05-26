@@ -10,7 +10,7 @@ public class App extends JFrame {
         setResizable(false);
         pack();
 
-        setTitle("Snek");
+        setTitle("Snake");
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
@@ -23,6 +23,6 @@ public class App extends JFrame {
                 ex.setVisible(true);
             }
         });
-        System.out.print("Hello World");
+        System.out.print("Game Started");
     }
 }
