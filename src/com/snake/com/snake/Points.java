@@ -106,13 +106,13 @@ public class Points extends Thread{
         int movement =(int) (Math.random()*20);
 
         if(movement == 0 && (this.frog_x/DOT_SIZE - 1) >= 0){
-            this.frog_x -= 1*DOT_SIZE;
+            this.frog_x -= DOT_SIZE;
         }else if(movement == 1 && (this.frog_x/DOT_SIZE + 1) <= 290) {
-            this.frog_x += 1*DOT_SIZE;
+            this.frog_x += DOT_SIZE;
         }else if(movement == 2 && (this.frog_y/DOT_SIZE - 1) >= 0) {
-            this.frog_y -= 1*DOT_SIZE;
+            this.frog_y -= DOT_SIZE;
         }else if(movement == 3 && (this.frog_y/DOT_SIZE + 1) <= 290) {
-            this.frog_y += 1*DOT_SIZE;
+            this.frog_y += DOT_SIZE;
         }
     }
 

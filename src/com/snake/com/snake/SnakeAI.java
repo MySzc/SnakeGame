@@ -48,17 +48,15 @@ public class SnakeAI extends Snake {
 
     public boolean checkFutureSingleSnakeCollision(int futureHeadX, int futureHeadY){
         for (int z = this.getDots(); z > 0; z--) {
-            if((this.getJointX(0) == futureHeadX) &&
-                    (this.getJointY(0) == futureHeadY)) {
+            if((futureHeadX == this.getJointX(z)) &&
+                    (futureHeadY == this.getJointY(z))) {
                 System.out.println("Single Snake AI Collision");
-                this.isLoser = true;
                 return true;
             }
         }
 
         if(futureHeadX >= 300 || futureHeadX < 0 || futureHeadY >= 300 || futureHeadY < 0) {
-            System.out.println("Wall AI Collision");
-            this.isLoser = true;
+            System.out.println("future Wall AI Collision");
             return true;
         }
 
@@ -69,6 +67,7 @@ public class SnakeAI extends Snake {
 
         if(this.upDirection){
             if(checkFutureSingleSnakeCollision(turnUpX(), turnUpY())){
+
                 if(!checkFutureSingleSnakeCollision(turnRightX(), turnRightY())){
                     this.rightDirection = true;
                     this.upDirection = false;
@@ -131,20 +130,62 @@ public class SnakeAI extends Snake {
             }
         }
     }
-/*
-    void chasePoints(int frogX, int frogY, int appleX, int appleY){
+
+    public void completeAI(int frogX, int frogY, int appleX, int appleY){
+        this.avoidCollision();
+        this.chasePoints(frogX,frogY,appleX,appleY);
+        //this.avoidCollision();
+    }
+
+    public void chasePoints(int frogX, int frogY, int appleX, int appleY){
+
+        int closestX;
+        int closestY;
 
         if(getDistance(this.getJointX(0),this.getJointY(0), appleX, appleY) <
-        getDistance(this.getJointX(0),this.getJointY(0), frogX, frogY)){
-            if(this.getJointX(0) - appleX > this.getJointY(0) - appleY){
-
-            }
+                getDistance(this.getJointX(0),this.getJointY(0), frogX, frogY))
+        {
+            closestX = appleX;
+            closestY = appleY;
+        }else{
+            closestX = frogX;
+            closestY = frogY;
         }
 
+        int directionX = this.getJointX(0) - closestX;
+        int directionY = this.getJointY(0) - closestY;
+
+
+        if(Math.abs(directionX) > Math.abs(directionY)){
+
+                if(directionX < 0 && !checkFutureSingleSnakeCollision(turnRightX(), turnRightY())){
+                    this.rightDirection = true;
+                    this.upDirection = false;
+                    this.downDirection = false;
+                    this.leftDirection = false;
+                }else if(directionX >= 0 && !checkFutureSingleSnakeCollision(turnLeftX(), turnLeftY())){
+                    this.leftDirection = true;
+                    this.upDirection = false;
+                    this.downDirection = false;
+                    this.rightDirection = false;
+                }
+        }else{
+            if(directionY > 0 && !checkFutureSingleSnakeCollision(turnUpX(), turnUpY())){
+                this.upDirection = true;
+                this.rightDirection = false;
+                this.downDirection = false;
+                this.leftDirection = false;
+            }else if(directionY <= 0 && !checkFutureSingleSnakeCollision(turnDownX(), turnDownY())){
+                this.downDirection = true;
+                this.upDirection = false;
+                this.leftDirection = false;
+                this.rightDirection = false;
+            }
+        }
     }
-    */
+
     int getDistance(int snakeX, int snakeY, int pointX, int pointY){
-        return (int)Math.sqrt((snakeX-pointX)^2+(snakeY-pointY)^2);
+        return (int)Math.sqrt((snakeX-pointX)*(snakeX-pointX)+(snakeY-pointY)*(snakeY-pointY));
     }
 
 }

@@ -203,8 +203,9 @@ public class Board extends JPanel implements ActionListener {
             checkPoints(snakeAI);
             checkAllCollisions(this.snakePlayer, this.snakeAI, this.timer);
             points.moveFrog();
-            snakeAI.avoidCollision();
-            //snakeAI.moveSnake();
+            snakeAI.completeAI(this.points.getFrog_x(),this.points.getFrog_y(),
+                                this.points.getApple_x(),this.points.getApple_y());
+            snakeAI.moveSnake();
             snakePlayer.moveSnake();
         }
 
