@@ -2,11 +2,11 @@ package com.snake;
 
 import javax.swing.*;
 
-public class SnakePlayer extends Snake {
+public class SnakePlayer extends Snake{
 
     SnakePlayer(){
         loadImageSnake();
-        rightDirection = true;
+        this.turnSnakeRight();
     }
 
     @Override

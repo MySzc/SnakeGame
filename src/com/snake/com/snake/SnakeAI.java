@@ -6,7 +6,7 @@ public class SnakeAI extends Snake {
 
     SnakeAI(){
         loadImageSnake();
-        leftDirection = true;
+        this.turnSnakeLeft();
     }
 
     @Override
@@ -22,7 +22,7 @@ public class SnakeAI extends Snake {
         return this.getJointY(0);
     }
     public int turnRightX(){
-        return this.getJointX(0)  + this.getDOT_SIZE();
+        return this.getJointX(0) + this.getDOT_SIZE();
     }
 
     public int turnLeftY(){
@@ -46,98 +46,83 @@ public class SnakeAI extends Snake {
         return this.getJointX(0);
     }
 
-    public boolean checkFutureSingleSnakeCollision(int futureHeadX, int futureHeadY){
+    // checks if a position on the board is a wall or a part of the AI snake
+    public boolean checkFutureSingleSnakeCollision(int futureHeadX, int futureHeadY, Snake snakePlayer){
         for (int z = this.getDots(); z > 0; z--) {
-            if((futureHeadX == this.getJointX(z)) &&
-                    (futureHeadY == this.getJointY(z))) {
-                System.out.println("Single Snake AI Collision");
+            if((futureHeadX == this.getJointX(z) || futureHeadX == snakePlayer.getJointX(z)) &&
+                    (futureHeadY == this.getJointY(z) || futureHeadY == snakePlayer.getJointY(z))) {
+                System.out.println("Future Snake AI Collision");
                 return true;
             }
         }
 
         if(futureHeadX >= 300 || futureHeadX < 0 || futureHeadY >= 300 || futureHeadY < 0) {
-            System.out.println("future Wall AI Collision");
+            System.out.println("Future Wall AI Collision");
             return true;
         }
 
         return false;
     }
 
-    public void avoidCollision(){
 
-        if(this.upDirection){
-            if(checkFutureSingleSnakeCollision(turnUpX(), turnUpY())){
 
-                if(!checkFutureSingleSnakeCollision(turnRightX(), turnRightY())){
-                    this.rightDirection = true;
-                    this.upDirection = false;
-                    this.downDirection = false;
-                    this.leftDirection = false;
+    // simple collision avoidance
+    public void avoidCollision(Snake snakePlayer){
+
+        // if the snake is moving up
+        if(this.isUpDirection()){
+            //and if the next move up is going to cause a collision
+            if(checkFutureSingleSnakeCollision(turnUpX(), turnUpY(), snakePlayer)){
+
+                // then turn to the right if it doesnt cause a collision
+                if(!checkFutureSingleSnakeCollision(turnRightX(), turnRightY(), snakePlayer)){
+                    this.turnSnakeRight();
+                // or to the left if it does
                 }else {
-                    this.leftDirection = true;
-                    this.upDirection = false;
-                    this.downDirection = false;
-                    this.rightDirection = false;
+                    this.turnSnakeLeft();
+                }
+                // no other movement options are available
+            }
+        }else
+
+        //the same process as before for all other directions
+        if(this.isDownDirection()){
+            if(checkFutureSingleSnakeCollision(turnDownX(), turnDownY(), snakePlayer)){
+                if(!checkFutureSingleSnakeCollision(turnRightX(), turnRightY(), snakePlayer)){
+                    this.turnSnakeRight();
+                }else {
+                    this.turnSnakeLeft();
                 }
             }
         }else
 
-        if(this.downDirection){
-            if(checkFutureSingleSnakeCollision(turnDownX(), turnDownY())){
-                if(!checkFutureSingleSnakeCollision(turnRightX(), turnRightY())){
-                    this.rightDirection = true;
-                    this.upDirection = false;
-                    this.downDirection = false;
-                    this.leftDirection = false;
+        if(this.isLeftDirection()){
+            if(checkFutureSingleSnakeCollision(turnLeftX(), turnLeftY(), snakePlayer)){
+                if(!checkFutureSingleSnakeCollision(turnUpX(), turnUpY(), snakePlayer)){
+                    this.turnSnakeUp();
                 }else {
-                    this.leftDirection = true;
-                    this.upDirection = false;
-                    this.downDirection = false;
-                    this.rightDirection = false;
+                    this.turnSnakeDown();
                 }
             }
         }else
 
-        if(this.leftDirection){
-            if(checkFutureSingleSnakeCollision(turnLeftX(), turnLeftY())){
-                if(!checkFutureSingleSnakeCollision(turnUpX(), turnUpY())){
-                    this.upDirection = true;
-                    this.rightDirection = false;
-                    this.downDirection = false;
-                    this.leftDirection = false;
+        if(this.isRightDirection()){
+            if(checkFutureSingleSnakeCollision(turnRightX(), turnRightY(), snakePlayer)){
+                if(!checkFutureSingleSnakeCollision(turnUpX(), turnUpY(), snakePlayer)){
+                    this.turnSnakeUp();
                 }else {
-                    this.downDirection = true;
-                    this.upDirection = false;
-                    this.leftDirection = false;
-                    this.rightDirection = false;
-                }
-            }
-        }else
-
-        if(this.rightDirection){
-            if(checkFutureSingleSnakeCollision(turnRightX(), turnRightY())){
-                if(!checkFutureSingleSnakeCollision(turnUpX(), turnUpY())){
-                    this.upDirection = true;
-                    this.rightDirection = false;
-                    this.downDirection = false;
-                    this.leftDirection = false;
-                }else {
-                    this.downDirection = true;
-                    this.upDirection = false;
-                    this.leftDirection = false;
-                    this.rightDirection = false;
+                    this.turnSnakeDown();
                 }
             }
         }
     }
 
-    public void completeAI(int frogX, int frogY, int appleX, int appleY){
-        this.avoidCollision();
-        this.chasePoints(frogX,frogY,appleX,appleY);
-        //this.avoidCollision();
+    public void completeAI(int frogX, int frogY, int appleX, int appleY, Snake snakePlayer){
+        this.avoidCollision(snakePlayer);
+        this.chasePoints(frogX,frogY,appleX,appleY, snakePlayer);
     }
 
-    public void chasePoints(int frogX, int frogY, int appleX, int appleY){
+    public void chasePoints(int frogX, int frogY, int appleX, int appleY, Snake snakePlayer){
 
         int closestX;
         int closestY;
@@ -158,28 +143,16 @@ public class SnakeAI extends Snake {
 
         if(Math.abs(directionX) > Math.abs(directionY)){
 
-                if(directionX < 0 && !checkFutureSingleSnakeCollision(turnRightX(), turnRightY())){
-                    this.rightDirection = true;
-                    this.upDirection = false;
-                    this.downDirection = false;
-                    this.leftDirection = false;
-                }else if(directionX >= 0 && !checkFutureSingleSnakeCollision(turnLeftX(), turnLeftY())){
-                    this.leftDirection = true;
-                    this.upDirection = false;
-                    this.downDirection = false;
-                    this.rightDirection = false;
+                if(directionX < 0 && !checkFutureSingleSnakeCollision(turnRightX(), turnRightY(), snakePlayer)){
+                    this.turnSnakeRight();
+                }else if(directionX >= 0 && !checkFutureSingleSnakeCollision(turnLeftX(), turnLeftY(), snakePlayer)){
+                    this.turnSnakeLeft();
                 }
         }else{
-            if(directionY > 0 && !checkFutureSingleSnakeCollision(turnUpX(), turnUpY())){
-                this.upDirection = true;
-                this.rightDirection = false;
-                this.downDirection = false;
-                this.leftDirection = false;
-            }else if(directionY <= 0 && !checkFutureSingleSnakeCollision(turnDownX(), turnDownY())){
-                this.downDirection = true;
-                this.upDirection = false;
-                this.leftDirection = false;
-                this.rightDirection = false;
+            if(directionY > 0 && !checkFutureSingleSnakeCollision(turnUpX(), turnUpY(), snakePlayer)){
+                this.turnSnakeUp();
+            }else if(directionY <= 0 && !checkFutureSingleSnakeCollision(turnDownX(), turnDownY(), snakePlayer)){
+                this.turnSnakeDown();
             }
         }
     }

@@ -1,8 +1,8 @@
 package com.snake;
 
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+
+import java.util.ArrayList;
 
 public class Snake extends Thread{
 
@@ -13,13 +13,15 @@ public class Snake extends Thread{
     // Joints of the snake
     private int[] x;
     private int[] y;
+    //private ArrayList<Integer> x;
+    //private ArrayList<Integer> y;
 
     // TODO Move this to SnakePlayer
     // Movements of the snake
-    public boolean rightDirection = false;
-    public boolean leftDirection = false;
-    public boolean upDirection = false;
-    public boolean downDirection = false;
+    private boolean rightDirection = false;
+    private boolean leftDirection = false;
+    private boolean upDirection = false;
+    private boolean downDirection = false;
 
     // Images of the snake
     public Image head;
@@ -28,6 +30,52 @@ public class Snake extends Thread{
     // Needed to check the winner of the game
     public boolean isLoser = false;
 
+
+    // controlling movement of the snake
+    public void turnSnakeRight(){
+        if(!this.leftDirection){
+            this.rightDirection = true;
+            this.upDirection = false;
+            this.downDirection = false;
+        }
+    }
+    public void turnSnakeLeft(){
+        if(!this.rightDirection){
+            this.leftDirection = true;
+            this.upDirection = false;
+            this.downDirection = false;
+        }
+    }
+    public void turnSnakeUp(){
+        if(!this.downDirection){
+            this.upDirection = true;
+            this.rightDirection = false;
+            this.leftDirection = false;
+        }
+    }
+    public void turnSnakeDown(){
+        if(!this.upDirection){
+            this.downDirection = true;
+            this.rightDirection = false;
+            this.leftDirection = false;
+        }
+    }
+
+    public boolean isRightDirection(){
+        return this.rightDirection;
+    }
+
+    public boolean isLeftDirection(){
+        return this.leftDirection;
+    }
+
+    public boolean isUpDirection(){
+        return this.upDirection;
+    }
+
+    public boolean isDownDirection(){
+        return this.downDirection;
+    }
 
     // Snake movement
     public void moveSnake(){
@@ -51,43 +99,8 @@ public class Snake extends Thread{
         if(downDirection){
             this.y[0] += DOT_SIZE;
         }
-    // TODO Move this to overridden SnakePlayer method, write new default + AI movement
     }
-/*
-    public class TAdapter extends KeyAdapter{
-        // TODO Move this to SnakePlayer
 
-        @Override
-        public void keyPressed(KeyEvent e) {
-
-            int Key = e.getKeyCode();
-
-            if(Key == KeyEvent.VK_LEFT && !rightDirection){
-                leftDirection = true;
-                upDirection = false;
-                downDirection = false;
-            }
-
-            if(Key == KeyEvent.VK_RIGHT && !leftDirection){
-                rightDirection = true;
-                upDirection = false;
-                downDirection = false;
-            }
-
-            if(Key == KeyEvent.VK_UP && !downDirection){
-                upDirection = true;
-                leftDirection = false;
-                rightDirection = false;
-            }
-
-            if(Key == KeyEvent.VK_DOWN && !upDirection){
-                downDirection = true;
-                leftDirection = false;
-                rightDirection = false;
-            }
-        }
-    }
-*/
     // Snake collision
     public boolean checkSingleSnakeCollision(){
         for (int z = this.dots; z > 0; z--) {

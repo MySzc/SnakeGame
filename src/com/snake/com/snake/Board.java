@@ -204,7 +204,9 @@ public class Board extends JPanel implements ActionListener {
             checkAllCollisions(this.snakePlayer, this.snakeAI, this.timer);
             points.moveFrog();
             snakeAI.completeAI(this.points.getFrog_x(),this.points.getFrog_y(),
-                                this.points.getApple_x(),this.points.getApple_y());
+                                this.points.getApple_x(),this.points.getApple_y(),
+                                                               this.snakePlayer );
+
             snakeAI.moveSnake();
             snakePlayer.moveSnake();
         }
@@ -212,36 +214,28 @@ public class Board extends JPanel implements ActionListener {
         repaint();
     }
 
+    // sets controller keys
     public class TAdapter extends KeyAdapter {
-        // TODO Move this to SnakePlayer
 
         @Override
         public void keyPressed(KeyEvent e) {
 
             int Key = e.getKeyCode();
 
-            if(Key == KeyEvent.VK_LEFT && !snakePlayer.rightDirection){
-                snakePlayer.leftDirection = true;
-                snakePlayer.upDirection = false;
-                snakePlayer.downDirection = false;
+            if(Key == KeyEvent.VK_LEFT ){
+                snakePlayer.turnSnakeLeft();
             }
 
-            if(Key == KeyEvent.VK_RIGHT && !snakePlayer.leftDirection){
-                snakePlayer.rightDirection = true;
-                snakePlayer.upDirection = false;
-                snakePlayer.downDirection = false;
+            if(Key == KeyEvent.VK_RIGHT ){
+                snakePlayer.turnSnakeRight();
             }
 
-            if(Key == KeyEvent.VK_UP && !snakePlayer.downDirection){
-                snakePlayer.upDirection = true;
-                snakePlayer.leftDirection = false;
-                snakePlayer.rightDirection = false;
+            if(Key == KeyEvent.VK_UP ){
+                snakePlayer.turnSnakeUp();
             }
 
-            if(Key == KeyEvent.VK_DOWN && !snakePlayer.upDirection){
-                snakePlayer.downDirection = true;
-                snakePlayer.leftDirection = false;
-                snakePlayer.rightDirection = false;
+            if(Key == KeyEvent.VK_DOWN ){
+                snakePlayer.turnSnakeDown();
             }
         }
     }
