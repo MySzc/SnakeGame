@@ -3,6 +3,7 @@ package com.snake;
 import javax.swing.*;
 import java.awt.*;
 
+// Class defining points in the game
 public class Points extends Thread{
 
     // Rand seed
@@ -15,11 +16,11 @@ public class Points extends Thread{
 
 
 
-    //
+    // Position of the apple
     private int apple_x;
     private int apple_y;
 
-    //
+    // Position of the frog
     private int frog_x;
     private int frog_y;
 
@@ -32,11 +33,13 @@ public class Points extends Thread{
         loadImageApple();
     }
 
+    // Loading the sprites needed to draw the object
     public void loadImageFrog(){
         ImageIcon iif = new ImageIcon(getClass().getResource("/res/frog.png"));
         this.frog = iif.getImage();
     }
 
+    // Loading the sprites needed to draw the object
     public void loadImageApple(){
         ImageIcon iia = new ImageIcon(getClass().getResource("/res/apple.png"));
         this.apple = iia.getImage();
@@ -101,8 +104,9 @@ public class Points extends Thread{
 
     }
 
+    // Dictates how the from moves -- randomly unless it would cause it to go over the board border
     public void moveFrog(){
-        // TODO Frog movement
+
         int movement =(int) (Math.random()*20);
 
         if(movement == 0 && (this.frog_x/DOT_SIZE - 1) >= 0){

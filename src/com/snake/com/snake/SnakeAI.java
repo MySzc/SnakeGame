@@ -2,6 +2,7 @@ package com.snake;
 
 import javax.swing.*;
 
+// Class defining a snake controlled by the AI
 public class SnakeAI extends Snake {
 
     SnakeAI(){
@@ -9,6 +10,7 @@ public class SnakeAI extends Snake {
         this.turnSnakeLeft();
     }
 
+    // Loading the sprites needed to draw the object
     @Override
     public void loadImageSnake(){
         ImageIcon iih = new ImageIcon(getClass().getResource("/res/headAI.png"));
@@ -18,6 +20,7 @@ public class SnakeAI extends Snake {
         this.dot = iid.getImage();
     }
 
+    // A set of methods that return the X and Y position of the snake if it moved to the right of its current position
     public int turnRightY(){
         return this.getJointY(0);
     }
@@ -25,6 +28,7 @@ public class SnakeAI extends Snake {
         return this.getJointX(0) + this.getDOT_SIZE();
     }
 
+    // A set of methods that return the X and Y position of the snake if it moved to the left of its current position
     public int turnLeftY(){
         return this.getJointY(0);
     }
@@ -32,6 +36,7 @@ public class SnakeAI extends Snake {
         return this.getJointX(0)  - this.getDOT_SIZE();
     }
 
+    // A set of methods that return the X and Y position of the snake if it moved up of its current position
     public int turnUpY(){
         return this.getJointY(0)  - this.getDOT_SIZE();
     }
@@ -39,6 +44,7 @@ public class SnakeAI extends Snake {
         return this.getJointX(0);
     }
 
+    // A set of methods that return the X and Y position of the snake if it moved down of its current position
     public int turnDownY(){
         return this.getJointY(0)  + this.getDOT_SIZE();
     }
@@ -46,7 +52,7 @@ public class SnakeAI extends Snake {
         return this.getJointX(0);
     }
 
-    // checks if a position on the board is a wall or a part of the AI snake
+    // checks if a position on the board is a wall or a part of a snake
     public boolean checkFutureSingleSnakeCollision(int futureHeadX, int futureHeadY, Snake snakePlayer){
         for (int z = this.getDots(); z > 0; z--) {
             if((futureHeadX == this.getJointX(z) || futureHeadX == snakePlayer.getJointX(z)) &&
@@ -117,11 +123,13 @@ public class SnakeAI extends Snake {
         }
     }
 
+    // method combining both methods of movement prediction done by the enemy snake
     public void completeAI(int frogX, int frogY, int appleX, int appleY, Snake snakePlayer){
         this.avoidCollision(snakePlayer);
         this.chasePoints(frogX,frogY,appleX,appleY, snakePlayer);
     }
 
+    // Follows the nearest point object while avoiding collisions
     public void chasePoints(int frogX, int frogY, int appleX, int appleY, Snake snakePlayer){
 
         int closestX;
@@ -157,6 +165,7 @@ public class SnakeAI extends Snake {
         }
     }
 
+    // Deriving the distance from the object using pythagorean theorem
     int getDistance(int snakeX, int snakeY, int pointX, int pointY){
         return (int)Math.sqrt((snakeX-pointX)*(snakeX-pointX)+(snakeY-pointY)*(snakeY-pointY));
     }

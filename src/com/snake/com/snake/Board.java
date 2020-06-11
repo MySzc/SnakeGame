@@ -6,7 +6,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.*;
+import java.util.Collections;
+import java.util.PriorityQueue;
 
+//Class responsible for combining all elements of the game
 public class Board extends JPanel implements ActionListener {
 
     // Board size
@@ -19,6 +23,8 @@ public class Board extends JPanel implements ActionListener {
     private final int DELAY = 140;
     // In game flag
     public boolean inGame;
+    // High score
+    public PriorityQueue<Integer> highScore = new PriorityQueue<Integer>(10, Collections.reverseOrder());
 
     // Game objects
     private SnakePlayer snakePlayer;
@@ -37,9 +43,11 @@ public class Board extends JPanel implements ActionListener {
         snakePlayer.start();
         snakeAI = new SnakeAI();
         snakeAI.start();
+        readHighestScores();
         initGame();
     }
 
+    // Setting all the pieces on the board
     public void initGame(){
         this.snakePlayer.setDots(3);
         this.snakePlayer.setJointsSize(GRID_NUM);
@@ -65,12 +73,18 @@ public class Board extends JPanel implements ActionListener {
         this.timer.start();
     }
 
+    // Swing function used to paint objects in the game
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        doDrawing(g);
+        try {
+            doDrawing(g);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
+    // Function used to draw the shape of all the dots making up the snake
     private void drawSnake(Snake snakeLoc, Graphics g){
         for (int z = 0; z < snakeLoc.getDots(); z++){
             if(z == 0){
@@ -82,7 +96,8 @@ public class Board extends JPanel implements ActionListener {
 
     }
 
-    private void doDrawing(Graphics g){
+    // Function responsible for painting all the components of the in game screen
+    private void doDrawing(Graphics g) throws IOException {
         if(inGame){
             g.drawImage(points.getAppleImage(), points.getApple_x(), points.getApple_y(), this);
             g.drawImage(points.getFrogImage(), points.getFrog_x(), points.getFrog_y(), this);
@@ -95,25 +110,40 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    private void gameOver(Graphics g){
+    // Function responsible for painting all the components of the game over screen
+    private void gameOver(Graphics g) throws IOException {
         System.out.println("Game Over");
         String msg = "Error: no winners";
-
+        highScore.add(this.snakePlayer.getDots());
+        String pts = "Points: " + Integer.toString(this.snakePlayer.getDots());
+        PriorityQueue<Integer> tmpQueue = new PriorityQueue<Integer>(highScore);
+        String tmp = "Highest scores:";
         if(snakeAI.isLoser){
             msg = "Game Over, Player Won";
         }else{
             msg = "Game Over, AI Won";
         }
 
+
         Font small = new Font("Helvetica", Font.BOLD, 14);
         FontMetrics metr = getFontMetrics(small);
 
         g.setColor(Color.white);
         g.setFont(small);
-        g.drawString(msg,(BOARD_WIDTH - metr.stringWidth(msg))/2, BOARD_HEIGHT/2);
+        g.drawString(msg,(BOARD_WIDTH - metr.stringWidth(msg))/2, BOARD_HEIGHT/2-100);
+        g.drawString(pts,(BOARD_WIDTH - metr.stringWidth(pts))/2, BOARD_HEIGHT/2-50);
+        g.drawString(tmp,(BOARD_WIDTH - metr.stringWidth(tmp))/2, BOARD_HEIGHT/2);
+
+        for (int i = 0; i < 5 && !tmpQueue.isEmpty(); i++){
+            String highest = Integer.toString(i+1) + ": " + Integer.toString(tmpQueue.poll());
+            g.drawString(highest,(BOARD_WIDTH - metr.stringWidth(highest))/2, BOARD_HEIGHT/2+ 20+i*20);
+        }
+
+        writeHighestScores();
     }
 
 
+    // Function responsible for checking if a snake has gotten a point and increasing its size if it happened
     private void checkPoints(Snake snakeLoc){
         if((snakeLoc.getJointX(0) == points.getApple_x()) &&
            (snakeLoc.getJointY(0) == points.getApple_y())) {
@@ -130,32 +160,31 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
+    // functon checking if any of the snakes went over the border
     private void checkBoardCollisions(Snake snakeLoc) {
 
         if (snakeLoc.getJointY(0) >= BOARD_HEIGHT) {
-            System.out.println("BoardCollision");
             snakeLoc.isLoser = true;
             this.inGame = false;
         } else if (snakeLoc.getJointY(0) < 0) {
-            System.out.println("BoardCollision");
             snakeLoc.isLoser = true;
             this.inGame = false;
         } else if (snakeLoc.getJointX(0) >= BOARD_WIDTH) {
-            System.out.println("BoardCollision");
             snakeLoc.isLoser = true;
             this.inGame = false;
         } else if (snakeLoc.getJointX(0) < 0) {
-            System.out.println("BoardCollision");
+
             snakeLoc.isLoser = true;
             this.inGame = false;
         }
     }
 
+    // function checking if any of the snakes have bumped into each other
     public boolean checkTwoSnakeCollision(Snake snakeAI, Snake snakePlayer){
         for (int z = snakeAI.getDots()-1; z >= 0; z--) {
             if((snakeAI.getJointX(0) == snakePlayer.getJointX(z)) &&
                     (snakeAI.getJointY(0) == snakePlayer.getJointY(z))) {
-                System.out.println("AI into Player Snake Collision");
+
                 snakeAI.isLoser = true;
                 return true;
             }
@@ -164,7 +193,7 @@ public class Board extends JPanel implements ActionListener {
         for (int z = snakePlayer.getDots()-1; z >= 0; z--) {
             if((snakePlayer.getJointX(0) == snakeAI.getJointX(z)) &&
                     (snakePlayer.getJointY(0) == snakeAI.getJointY(z))) {
-                System.out.println("Player into AI Snake Collision");
+
                 snakePlayer.isLoser = true;
                 return true;
             }
@@ -172,6 +201,7 @@ public class Board extends JPanel implements ActionListener {
         return false;
     }
 
+    //function combining all the collision checking functions
     public void checkAllCollisions(Snake snakePlayer, Snake snakeAI, Timer timer){
 
         if(inGame)
@@ -196,6 +226,7 @@ public class Board extends JPanel implements ActionListener {
             timer.stop();
     };
 
+    // Main function responsible for updating the in game screen
     @Override
     public void actionPerformed(ActionEvent e) {
         if (inGame){
@@ -214,7 +245,7 @@ public class Board extends JPanel implements ActionListener {
         repaint();
     }
 
-    // sets controller keys
+    // Reads keyboard input from arrow keys and assigns them a movement
     public class TAdapter extends KeyAdapter {
 
         @Override
@@ -238,6 +269,49 @@ public class Board extends JPanel implements ActionListener {
                 snakePlayer.turnSnakeDown();
             }
         }
+    }
+
+    // function that reads the current highest scores from a file
+    void readHighestScores(){
+        BufferedReader reader;
+        try {
+            reader = new BufferedReader(new FileReader(
+                    "HighScore.txt"));
+            String line = reader.readLine();
+            int score;
+            try {
+                line = reader.readLine();
+            }
+            catch (NumberFormatException e) {
+                score = 0;
+            }
+
+            while (line != null) {
+                System.out.println(line);
+                score = Integer.parseInt(line);
+                highScore.add(score);
+                line = reader.readLine();
+
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //Function that writes the 5 highest scores to a file
+    public void writeHighestScores() throws IOException {
+
+        BufferedWriter bw = new BufferedWriter(new FileWriter("HighScore.txt", true));
+
+        PriorityQueue<Integer> tmpQueue = new PriorityQueue<Integer>(highScore);
+        for (int i = 0; i < 5 && !tmpQueue.isEmpty(); i++) {
+            int tmp = tmpQueue.poll();
+            bw.write(Integer.toString(tmp));
+            bw.newLine();
+        }
+
+        bw.close();
     }
 
 }

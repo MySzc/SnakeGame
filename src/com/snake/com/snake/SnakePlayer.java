@@ -2,6 +2,7 @@ package com.snake;
 
 import javax.swing.*;
 
+// Class defining a snake used by the player
 public class SnakePlayer extends Snake{
 
     SnakePlayer(){
@@ -9,6 +10,7 @@ public class SnakePlayer extends Snake{
         this.turnSnakeRight();
     }
 
+    // Loading the sprites needed to draw the object
     @Override
     public void loadImageSnake(){
         ImageIcon iih = new ImageIcon(getClass().getResource("/res/headPlayer.png"));

@@ -3,6 +3,7 @@ package com.snake;
 import javax.swing.*;
 import java.awt.*;
 
+//Class containing the main function that creates the game window
 public class App extends JFrame {
 
     public App(){

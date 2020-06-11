@@ -2,8 +2,8 @@ package com.snake;
 
 import java.awt.*;
 
-import java.util.ArrayList;
 
+// Class defining a basic snake
 public class Snake extends Thread{
 
     // Dots making the body of the snake
@@ -13,11 +13,8 @@ public class Snake extends Thread{
     // Joints of the snake
     private int[] x;
     private int[] y;
-    //private ArrayList<Integer> x;
-    //private ArrayList<Integer> y;
 
-    // TODO Move this to SnakePlayer
-    // Movements of the snake
+    // Directions in which the snake can move
     private boolean rightDirection = false;
     private boolean leftDirection = false;
     private boolean upDirection = false;
@@ -61,25 +58,11 @@ public class Snake extends Thread{
         }
     }
 
-    public boolean isRightDirection(){
-        return this.rightDirection;
-    }
 
-    public boolean isLeftDirection(){
-        return this.leftDirection;
-    }
-
-    public boolean isUpDirection(){
-        return this.upDirection;
-    }
-
-    public boolean isDownDirection(){
-        return this.downDirection;
-    }
 
     // Snake movement
     public void moveSnake(){
-        for (int z = this.dots; z > 0; z--){
+        for (int z = this.getDots(); z > 0; z--){
             this.x[z] = this.x[z-1];
             this.y[z] = this.y[z-1];
         }
@@ -101,9 +84,9 @@ public class Snake extends Thread{
         }
     }
 
-    // Snake collision
+    // Checks if the snake collides with itself
     public boolean checkSingleSnakeCollision(){
-        for (int z = this.dots; z > 0; z--) {
+        for (int z = this.getDots(); z > 0; z--) {
             if((this.x[0] == this.x[z]) &&
                 (this.y[0] == this.y[z])) {
                 System.out.println("Single Snake Collision");
@@ -116,7 +99,24 @@ public class Snake extends Thread{
 
 
 
-    // Snake access
+    // Snake access methods
+
+    public boolean isRightDirection(){
+        return this.rightDirection;
+    }
+
+    public boolean isLeftDirection(){
+        return this.leftDirection;
+    }
+
+    public boolean isUpDirection(){
+        return this.upDirection;
+    }
+
+    public boolean isDownDirection(){
+        return this.downDirection;
+    }
+
     public int getDOT_SIZE(){
         return this.DOT_SIZE;
     }
